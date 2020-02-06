@@ -48,10 +48,11 @@ int receber_dado_uart0(FILE* fluxo) {
 void ponto(){
     // Ligando o LED
 	PORTB = PORTB | (1 << PORTB5);
-    // Atraso de 1/2 segundo
+    // Atraso de 0.5 segundo
 	_delay_ms(500);
-    // DesLigando? o LED
+    // Desligando o LED
 	PORTB = PORTB & ~(1 << PORTB5);
+    // Atraso de 0.5 segundo
     _delay_ms(500);
 }
 
@@ -60,24 +61,31 @@ void traco(){
 	PORTB = PORTB | (1 << PORTB5);
     // Atraso de 1.5 segundos
 	_delay_ms(1500);
-    // DesLigando? o LED
+    // Desligando o LED
 	PORTB = PORTB & ~(1 << PORTB5);
+    // Atraso de 0.5 segundo
     _delay_ms(500);
 }
 
 int upperAscii(char letra){
     int asc = letra;
     int novoAsc = asc;
+
+    //Verificando se é uma letra minúscula
     if (asc >= 97 && asc <= 122){
+        //Tornando-a maiúscula
         novoAsc = (asc - 97) + 65;
     }
+    //Verificando se está fora do range suportado pelo morse
     if (novoAsc < 33 || novoAsc > 95){
+        //Posição para gerar saída vazia
         novoAsc = 94;
     }
     return novoAsc;
 }
 
 void codificar(int asc){
+
     // !"x$x&'()xx,-./0123456789:;x=x?@abcdefghijklmnopqrstuvwxyzxxxx_    
     char caracteres[63][7] = {"tptptt", "ptpptp", " ", "ppptppt", " ", "ptppp", "pttttp", "tpttp", "tpttpt", " ", " ", "ttpptt", "tppppt", "ptptpt", "tpptp",
     "ttttt", "ptttt", "ppttt", "ppptt", "ppppt", "ppppp", "tpppp", "ttppp", "tttpp", "ttttp", 
@@ -101,7 +109,7 @@ void codificar(int asc){
             ponto();
             break;
         default:
-            //Espaço ou caracteres desconhecidos
+            //Espaço
             _delay_ms(2500);
             break;
         }
@@ -125,9 +133,10 @@ int main () {
     stdin = &stdin_uart0;
     stdout = &stdout_uart0;
 
-    // Laço infinito
     int asc; 
     int tamanho;
+
+    // Laço infinito
     while (1) {
         // Recebendo  dados
         gets(texto);
@@ -140,6 +149,5 @@ int main () {
             //Espaçamento entre letras
             _delay_ms(1000);
         }
-        //printf("%s\n",texto);
     }
 }
